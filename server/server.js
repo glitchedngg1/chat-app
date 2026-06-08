@@ -13,13 +13,10 @@
 // ─── 1. Environment ───────────────────────────────────────────────────────────
 require('dotenv').config();
 
-// Validate required environment variables at startup — fail immediately if missing
-const REQUIRED_ENV = ['MONGODB_URI'];
-const missing = REQUIRED_ENV.filter((k) => !process.env[k]);
-if (missing.length) {
-  console.error(`❌ Missing required environment variables: ${missing.join(', ')}`);
-  console.error('   Set them in your Render dashboard (Environment → Add Variable)');
-  process.exit(1);
+// Warn about missing env vars but don't exit — allows debug deployment to start
+if (!process.env.MONGODB_URI) {
+  console.warn('⚠️  WARNING: MONGODB_URI is not set. DB operations will fail.');
+  console.warn('   Set it in Render dashboard → Environment → Add Variable');
 }
 
 // ─── 2. Imports ───────────────────────────────────────────────────────────────

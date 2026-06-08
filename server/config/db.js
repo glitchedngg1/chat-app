@@ -9,19 +9,14 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 
 async function connectDB() {
-  const uri = process.env.MONGODB_URI;
+  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/chatapp';
 
-  if (!uri) {
-    // Hard stop — no silent fallback to localhost in production
-    throw new Error(
-      'MONGODB_URI environment variable is not set. ' +
-        'Set it in your Render dashboard or .env file.'
-    );
+  if (!process.env.MONGODB_URI) {
+    console.warn('⚠️  MONGODB_URI not set — attempting localhost fallback (will fail on Render)');
   }
 
   await mongoose.connect(uri, {
-    // Atlas-recommended options
-    serverSelectionTimeoutMS: 10000, // fail fast if Atlas is unreachable
+    serverSelectionTimeoutMS: 10000,
     socketTimeoutMS: 45000,
     maxPoolSize: 10,
   });
