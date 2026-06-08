@@ -6,12 +6,28 @@ const Room = require('../models/Room');
  * GET /api/rooms
  * Returns all available rooms (default rooms first, then by creation date).
  */
-router.get('/', async (req, res, next) => {
+router.get('/', async (req, res) => {
   try {
-    const rooms = await Room.find().sort({ isDefault: -1, createdAt: 1 }).lean();
-    res.json({ success: true, rooms });
+    console.log('Mongo state:', Room.db.readyState);
+
+    const rooms = await Room.find()
+      .sort({ isDefault: -1, createdAt: 1 })
+      .lean();
+
+    res.json({
+      success: true,
+      count: rooms.length,
+      rooms
+    });
   } catch (error) {
-    next(error);
+    console.error('FULL ERROR:', error);
+
+    res.status(500).json({
+      success: false,
+      errorName: error.name,
+      errorMessage: error.message,
+      stack: error.stack
+    });
   }
 });
 

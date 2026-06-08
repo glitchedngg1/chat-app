@@ -90,6 +90,17 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// Debug endpoint — exposes raw mongoose connection info
+app.get('/api/debug', (req, res) => {
+  const mongoose = require('mongoose');
+  res.json({
+    mongoReadyState: mongoose.connection.readyState,
+    dbName: mongoose.connection.name,
+    host: mongoose.connection.host,
+    models: Object.keys(mongoose.models)
+  });
+});
+
 // ─── 8. 404 + Error handlers (MUST be after all routes) ──────────────────────
 app.use(notFound);
 app.use(errorHandler);
